@@ -77,18 +77,73 @@ const App = () => {
     }
   ])
 
+  const [totalStrength, setTotalStrength] = useState(0)
+  const [totalAgility, setTotalAgility] = useState(0)
+
+  const handleAddFighter = (fighter) => {
+    if (fighter.price > money) {
+      alert('Not enough money')
+    } else {
+      setTeam([...team, fighter])
+      setMoney(money - fighter.price)
+      calculateTotalStrength('add', fighter.strength)
+      calculateTotalAgility('add', fighter.agility)
+    }
+  }
+  const handleRemoveFighter = (ind) => {
+    setMoney(money + team[ind].price)
+    calculateTotalStrength('sub', team[ind].strength)
+    calculateTotalAgility('sub', team[ind].agility)
+    const updatedTeam = [...team.slice(0, ind), ...team.slice(ind + 1)]
+    setTeam(updatedTeam)
+  }
+
+  const calculateTotalStrength = (op, strength) => {
+    if (op == 'add') setTotalStrength(totalStrength + strength)
+    if (op == 'sub') setTotalStrength(totalStrength - strength)
+  }
+  const calculateTotalAgility = (op, agility) => {
+    if (op == 'add') setTotalAgility(totalAgility + agility)
+    if (op == 'sub') setTotalAgility(totalAgility - agility)
+  }
+
   return (
     <div>
-      <h2>Zombies</h2>
-      {zombieFighters.map((zom) => (
-        <div>
-          <img src={zom.img} alt={zom.name} />
-          <h3>{zom.name}</h3>
-          <h3>{zom.price}</h3>
-          <h3>{zom.strength}</h3>
-          <h3>{zom.agility}</h3>
-        </div>
-      ))}
+      <h2>Zombies Fighters</h2>
+      <h3>Money: {money}</h3>
+      <h3>Team Strength: {totalStrength}</h3>
+      <h3>Team Agility: {totalAgility}</h3>
+      <h3>Team </h3>
+      <ul>
+        {team.length > 0 ? (
+          team.map((member, ind) => (
+            <li>
+              <img src={member.img} alt={member.name} />
+              <p>{member.name}</p>
+              <p>Price: {member.price}</p>
+              <p>Strength: {member.strength}</p>
+              <p>Agility: {member.agility}</p>
+              <button onClick={(e) => handleRemoveFighter(ind)}>Remove</button>
+            </li>
+          ))
+        ) : (
+          <li>Pick some team members</li>
+        )}
+      </ul>
+
+      <h3>Fighters</h3>
+      <ul>
+        {zombieFighters.map((zom) => (
+          <li>
+            <img src={zom.img} alt={zom.name} />
+            <p>{zom.name}</p>
+            <p>Price: {zom.price}</p>
+            <p>Strength: {zom.strength}</p>
+            <p>Agility: {zom.agility}</p>
+            <button onClick={(e) => handleAddFighter(zom)}>Add</button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
